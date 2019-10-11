@@ -1,6 +1,7 @@
 #include "cligCore.h"
+#include "Snek.h"
 
 int main() {
-	cligCore::types::Range range;
-	range.showChooser("Testing testing 123");
+	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+	snekMain();
 }

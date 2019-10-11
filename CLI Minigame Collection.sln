@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLI Minigame Collection", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cligCore", "cligCore\cligCore.vcxproj", "{97F3478D-2C69-4B3B-9FA4-F600B0296BA7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Snek", "Snek\Snek.vcxproj", "{DB516996-B376-4539-8120-A5A908313394}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{97F3478D-2C69-4B3B-9FA4-F600B0296BA7}.Release|x64.Build.0 = Release|x64
 		{97F3478D-2C69-4B3B-9FA4-F600B0296BA7}.Release|x86.ActiveCfg = Release|Win32
 		{97F3478D-2C69-4B3B-9FA4-F600B0296BA7}.Release|x86.Build.0 = Release|Win32
+		{DB516996-B376-4539-8120-A5A908313394}.Debug|x64.ActiveCfg = Debug|x64
+		{DB516996-B376-4539-8120-A5A908313394}.Debug|x64.Build.0 = Debug|x64
+		{DB516996-B376-4539-8120-A5A908313394}.Debug|x86.ActiveCfg = Debug|Win32
+		{DB516996-B376-4539-8120-A5A908313394}.Debug|x86.Build.0 = Debug|Win32
+		{DB516996-B376-4539-8120-A5A908313394}.Release|x64.ActiveCfg = Release|x64
+		{DB516996-B376-4539-8120-A5A908313394}.Release|x64.Build.0 = Release|x64
+		{DB516996-B376-4539-8120-A5A908313394}.Release|x86.ActiveCfg = Release|Win32
+		{DB516996-B376-4539-8120-A5A908313394}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
