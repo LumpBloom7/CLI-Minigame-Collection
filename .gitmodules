@@ -1,0 +1,3 @@
+[submodule "cligCore"]
+	path = cligCore
+	url = https://github.com/LumpBloom7/cligCore.git
