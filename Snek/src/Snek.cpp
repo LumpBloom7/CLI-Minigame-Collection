@@ -2,6 +2,7 @@
 
 void SnekGame::play() {
 	cligCore::console::clear();
+
 	print(true);
 	std::thread inputThread(
 		[&] {
@@ -20,6 +21,7 @@ void SnekGame::play() {
 	auto handle = inputThread.native_handle();
 	inputThread.detach();
 	TerminateThread(handle, 0);
+	cligCore::console::clear();
 }
 
 void SnekGame::handleInput() {
@@ -49,7 +51,7 @@ void SnekGame::update() {
 	checkCollision();
 	if (m_pellets.size() < SnekConfigStore::simultaneousPellets)
 		spawnPellet();
-	if (m_bonus.x != -1)
+	if (m_bonus.x == -1)
 		spawnBonus();
 
 	if (m_snake.back() != oldBack) {
@@ -186,7 +188,7 @@ void SnekGame::spawnPellet() {
 
 	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 	cligCore::console::moveCursor(topLeft.x + newPellet.x * 2, topLeft.y + newPellet.y);
-	std::cout << contentColors[CellContent::pellet] << "  ";
+	std::cout << contentColors[CellContent::pellet] << "  " << rang::bg::reset;
 }
 
 void SnekGame::spawnBonus() {
@@ -196,7 +198,7 @@ void SnekGame::spawnBonus() {
 	std::uniform_int_distribution<int> genY(0, SnekConfigStore::playfieldHeight - 1);
 	std::uniform_real_distribution<double> genChance(0.0, 100.0);
 	Bonus newBonus;
-	if (genChance(mt) < SnekConfigStore::bonusChance) {
+	if (genChance(mt) <= SnekConfigStore::bonusChance) {
 		do {
 			newBonus = Bonus(genX(mt), genY(mt));
 		} while (
@@ -207,6 +209,6 @@ void SnekGame::spawnBonus() {
 
 		Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 		cligCore::console::moveCursor(topLeft.x + m_bonus.x * 2, topLeft.y + m_bonus.y);
-		std::cout << contentColors[CellContent::bonus] << "  ";
+		std::cout << contentColors[CellContent::bonus] << "  " << rang::bg::reset;
 	}
 }
