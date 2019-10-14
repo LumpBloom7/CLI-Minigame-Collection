@@ -169,6 +169,7 @@ void SnekGame::checkCollision() {
 
 	if (m_bonus == m_snake.front()) {
 		m_currScore += SnekConfigStore::bonusValue;
+		m_snake.emplace_back(m_snake.back());
 		m_bonus = Bonus(-1, -1);
 		return;
 	}
