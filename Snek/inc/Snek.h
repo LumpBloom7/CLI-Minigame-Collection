@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <deque>
 #include <atomic>
 #include <random>
 #include <unordered_map>
@@ -39,7 +40,7 @@ enum class Direction {
 };
 
 class SnekGame {
-	using Snake = std::vector<SnakePiece>;
+	using Snake = std::deque<SnakePiece>;
 	using Playfield = std::vector<std::vector<CellContent>>;
 
 public:

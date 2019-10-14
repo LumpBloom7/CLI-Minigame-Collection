@@ -43,6 +43,7 @@ void SnekGame::handleInput() {
 }
 
 void SnekGame::update() {
+	auto oldBack = m_snake.back().currentPos;
 	moveSnek();
 	checkCollision();
 	if (m_pellets < SnekConfigStore::simultaneousPellets)
@@ -50,8 +51,8 @@ void SnekGame::update() {
 	if (!m_bonusSpawned)
 		spawnBonus();
 
-	if (m_snake.back().currentPos != m_snake.back().previousPos && m_playfield[m_snake.back().previousPos.x][m_snake.back().previousPos.y] != CellContent::wall)
-		m_playfield[m_snake.back().previousPos.x][m_snake.back().previousPos.y] = CellContent::empty;
+	if (m_snake.back().currentPos != oldBack && m_playfield[oldBack.x][oldBack.y] != CellContent::wall)
+		m_playfield[oldBack.x][oldBack.y] = CellContent::empty;
 	m_playfield[m_snake.front().currentPos.x][m_snake.front().currentPos.y] = CellContent::snake;
 }
 
@@ -83,24 +84,23 @@ void SnekGame::initializePlayfield() {
 }
 
 void SnekGame::moveSnek() {
-	m_snake.front().previousPos = m_snake.front().currentPos;
+	auto newFront = m_snake.front();
 	switch (m_currDirection) {
 	case Direction::left:
-		--m_snake.front().currentPos.x;
+		--newFront.currentPos.x;
 		break;
 	case Direction::right:
-		++m_snake.front().currentPos.x;
+		++newFront.currentPos.x;
 		break;
 	case Direction::up:
-		--m_snake.front().currentPos.y;
+		--newFront.currentPos.y;
 		break;
 	case Direction::down:
-		++m_snake.front().currentPos.y;
+		++newFront.currentPos.y;
 		break;
 	}
-
-	for (auto piece = m_snake.begin() + 1; piece < m_snake.end(); ++piece)
-		piece->previousPos = piece->currentPos, piece->currentPos = (piece - 1)->previousPos;
+	m_snake.emplace_front(newFront);
+	m_snake.pop_back();
 }
 
 void SnekGame::checkCollision() {
