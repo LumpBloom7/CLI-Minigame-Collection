@@ -21,9 +21,15 @@
     <ClCompile Include="src\Snek.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SnekConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Snek.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\SnekConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

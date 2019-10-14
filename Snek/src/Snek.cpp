@@ -11,6 +11,7 @@ void SnekGame::play() {
 	);
 	while (!m_dead) {
 		if (!m_paused) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(SnekConfigStore::snakeUpdateDelayMs));
 			update();
 			print();
 		}
@@ -44,12 +45,12 @@ void SnekGame::handleInput() {
 void SnekGame::update() {
 	moveSnek();
 	checkCollision();
-	if (m_pellets < 5)
+	if (m_pellets < SnekConfigStore::simultaneousPellets)
 		spawnPellet();
 	if (!m_bonusSpawned)
 		spawnBonus();
 
-	if (m_snake.back().currentPos != m_snake.back().previousPos)
+	if (m_snake.back().currentPos != m_snake.back().previousPos && m_playfield[m_snake.back().previousPos.x][m_snake.back().previousPos.y] != CellContent::wall)
 		m_playfield[m_snake.back().previousPos.x][m_snake.back().previousPos.y] = CellContent::empty;
 	m_playfield[m_snake.front().currentPos.x][m_snake.front().currentPos.y] = CellContent::snake;
 }
@@ -106,12 +107,12 @@ void SnekGame::checkCollision() {
 	switch (m_playfield[m_snake.front().currentPos.x][m_snake.front().currentPos.y]) {
 	case CellContent::pellet:
 		m_snake.emplace_back(SnakePiece{ m_snake.back().previousPos,m_snake.back().previousPos });
-		m_currScore += 5;
+		m_currScore += SnekConfigStore::pelletValue;
 		--m_pellets;
 		break;
 	case CellContent::bonus:
 		m_snake.emplace_back(SnakePiece{ m_snake.back().previousPos,m_snake.back().previousPos });
-		m_currScore += 25;
+		m_currScore += SnekConfigStore::bonusValue;
 		m_bonusSpawned = false;
 		break;
 	case CellContent::wall:
@@ -133,12 +134,12 @@ void SnekGame::spawnPellet() {
 	++m_pellets;
 }
 
-void SnekGame::spawnBonus(double chance) {
+void SnekGame::spawnBonus() {
 	std::random_device rd;
 	std::mt19937 mt(rd());
 	std::uniform_int_distribution<int> gen(0, m_playfield.size() - 1);
-	std::uniform_real_distribution<double> gen2(0.0, 99.00);
-	if (gen2(mt) < chance) {
+	std::uniform_real_distribution<double> gen2(0.0, 100.0);
+	if (gen2(mt) < SnekConfigStore::bonusChance) {
 		int x, y;
 		do {
 			x = gen(mt), y = gen(mt);

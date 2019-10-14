@@ -26,9 +26,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Snek.cpp" />
+    <ClCompile Include="src\SnekConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Snek.h" />
+    <ClInclude Include="inc\SnekConfig.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

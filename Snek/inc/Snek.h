@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "cligCore.h"
 #include <thread>
+#include "SnekConfig.h"
 
 void snekMain();
 
@@ -60,9 +61,9 @@ private:
 	void moveSnek();
 	void checkCollision();
 	void spawnPellet();
-	void spawnBonus(double chance = 10.0);
+	void spawnBonus();
 
-	Playfield m_playfield = std::vector<std::vector<CellContent>>(32, std::vector<CellContent>(32, CellContent::empty));
+	Playfield m_playfield = std::vector<std::vector<CellContent>>(SnekConfigStore::playfieldWidth, std::vector<CellContent>(SnekConfigStore::playfieldHeight, CellContent::empty));
 	Snake m_snake{ {{2,1}},{{1,1}} };
 	std::atomic<Direction> m_currDirection = Direction::right;
 	bool m_paused = false;
