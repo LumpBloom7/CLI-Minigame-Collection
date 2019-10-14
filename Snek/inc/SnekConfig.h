@@ -6,6 +6,7 @@ struct SnekConfigStore {
 	static int pelletValue;
 	static int bonusValue;
 	static double bonusChance;
+	static int bonusDuration;
 	static int snakeUpdateDelayMs;
 	static int snekStartLength;
 };

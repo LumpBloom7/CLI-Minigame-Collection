@@ -2,6 +2,7 @@
 
 void SnekGame::play() {
 	cligCore::console::clear();
+	print(true);
 	std::thread inputThread(
 		[&] {
 			while (!m_dead && !m_paused) {
@@ -43,60 +44,104 @@ void SnekGame::handleInput() {
 }
 
 void SnekGame::update() {
-	auto oldBack = m_snake.back().currentPos;
+	auto oldBack = m_snake.back();
 	moveSnek();
 	checkCollision();
-	if (m_pellets < SnekConfigStore::simultaneousPellets)
+	if (m_pellets.size() < SnekConfigStore::simultaneousPellets)
 		spawnPellet();
-	if (!m_bonusSpawned)
+	if (m_bonus.x != -1)
 		spawnBonus();
 
-	if (m_snake.back().currentPos != oldBack && m_playfield[oldBack.x][oldBack.y] != CellContent::wall)
-		m_playfield[oldBack.x][oldBack.y] = CellContent::empty;
-	m_playfield[m_snake.front().currentPos.x][m_snake.front().currentPos.y] = CellContent::snake;
+	if (m_snake.back() != oldBack) {
+		Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
+		cligCore::console::moveCursor(topLeft.x + oldBack.x * 2, topLeft.y + oldBack.y);
+		std::cout << "  ";
+		m_playfield[oldBack.x][oldBack.y][CellContent::snake] = false;
+	}
 }
 
-void SnekGame::print() {
-	cligCore::console::resetCursor();
-	auto currentContent = CellContent::empty;
-	std::cout << "Score: " << m_currScore << "\n";
-	for (int j = 0; j < m_playfield[0].size(); ++j) {
-		for (int i = 0; i < m_playfield.size(); ++i) {
-			if (currentContent != m_playfield[i][j]) {
-				currentContent = m_playfield[i][j];
-				std::cout << contentColors[currentContent];
-			}
-			std::cout << "  ";
-		}
-		std::cout << "\n";
+void SnekGame::print(bool reprint) {
+	printStats();
+	if (reprint) {
+		printBorder();
+		printPellets();
 	}
-	std::cout << rang::bg::reset << std::endl;
+	printSnake();
+	std::cout << rang::bg::reset;
+}
+
+void SnekGame::printStats() {
+	cligCore::console::moveCursor(0, 0);
+	std::string score = "Score: " + std::to_string(m_currScore);
+	std::cout << score << std::endl;
+
+	std::string bonus = "Bonus: " + std::to_string(m_bonusTimer);
+	cligCore::console::moveCursor(cligCore::console::getConsoleWidth() / 2 - bonus.length() / 2, 0);
+	std::cout << bonus << std::endl;
+
+	std::string length = "Length: " + std::to_string(m_snake.size());
+	cligCore::console::moveCursor(cligCore::console::getConsoleWidth() - length.length(), 0);
+	std::cout << length << std::endl;
+
+}
+
+void SnekGame::printSnake() {
+	std::cout << contentColors[CellContent::snake];
+	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
+	cligCore::console::moveCursor(topLeft.x + m_snake.front().x * 2, topLeft.y + m_snake.front().y);
+	std::cout << "  ";
+}
+
+void SnekGame::printBorder() {
+	std::cout << contentColors[CellContent::wall];
+	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - (SnekConfigStore::playfieldWidth + 2), 1);
+	for (int i = 0; i < SnekConfigStore::playfieldWidth * 2 + 4; ++i) {
+		cligCore::console::moveCursor(topLeft.x + i, topLeft.y);
+		std::cout << " ";
+		cligCore::console::moveCursor(topLeft.x + i, topLeft.y + SnekConfigStore::playfieldHeight + 1);
+		std::cout << " ";
+	}
+	for (int i = 0; i < SnekConfigStore::playfieldHeight + 1; ++i) {
+		cligCore::console::moveCursor(topLeft.x, topLeft.y + i);
+		std::cout << "  ";
+		cligCore::console::moveCursor(topLeft.x + SnekConfigStore::playfieldWidth * 2 + 2, topLeft.y + i);
+		std::cout << "  ";
+	}
+}
+
+void SnekGame::printPellets() {
+	std::cout << contentColors[CellContent::pellet];
+	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
+	for (auto& pellet : m_pellets) {
+		cligCore::console::moveCursor(topLeft.x + pellet.x * 2, topLeft.y + pellet.y);
+		std::cout << "  ";
+	}
+
+	if (m_bonus.x != -1) {
+		std::cout << contentColors[CellContent::bonus];
+		cligCore::console::moveCursor(topLeft.x + m_bonus.x * 2, topLeft.y + m_bonus.y);
+		std::cout << "  ";
+	}
 }
 
 void SnekGame::initializePlayfield() {
-	for (int i = 0; i < m_playfield[0].size(); ++i)
-		m_playfield[i].front() = m_playfield[i].back() = CellContent::wall;
-	for (int i = 0; i < m_playfield[0].size(); ++i)
-		m_playfield.front()[i] = m_playfield.back()[i] = CellContent::wall;
-
-	for (auto& piece : m_snake)
-		m_playfield[piece.currentPos.x][piece.currentPos.y] = CellContent::snake;
 }
 
 void SnekGame::moveSnek() {
 	auto newFront = m_snake.front();
+	m_playfield[newFront.x][newFront.y][CellContent::snake] = true;
 	switch (m_currDirection) {
 	case Direction::left:
-		--newFront.currentPos.x;
+		--newFront.x;
 		break;
 	case Direction::right:
-		++newFront.currentPos.x;
+		++newFront.x;
 		break;
 	case Direction::up:
-		--newFront.currentPos.y;
+		--newFront.y;
 		break;
 	case Direction::down:
-		++newFront.currentPos.y;
+		++newFront.y;
 		break;
 	}
 	m_snake.emplace_front(newFront);
@@ -104,47 +149,64 @@ void SnekGame::moveSnek() {
 }
 
 void SnekGame::checkCollision() {
-	switch (m_playfield[m_snake.front().currentPos.x][m_snake.front().currentPos.y]) {
-	case CellContent::pellet:
-		m_snake.emplace_back(SnakePiece{ m_snake.back().previousPos,m_snake.back().previousPos });
-		m_currScore += SnekConfigStore::pelletValue;
-		--m_pellets;
-		break;
-	case CellContent::bonus:
-		m_snake.emplace_back(SnakePiece{ m_snake.back().previousPos,m_snake.back().previousPos });
+	for (auto pelletIt = m_pellets.begin(); pelletIt < m_pellets.end(); ++pelletIt)
+		if (*pelletIt == m_snake.front()) {
+			m_currScore += SnekConfigStore::pelletValue;
+			m_snake.emplace_back(m_snake.back());
+			m_pellets.erase(pelletIt);
+			return;
+		}
+
+	if (m_bonus == m_snake.front()) {
 		m_currScore += SnekConfigStore::bonusValue;
-		m_bonusSpawned = false;
-		break;
-	case CellContent::wall:
-	case CellContent::snake:
-		m_dead = true;
-		break;
+		m_bonus = Bonus(-1, -1);
+		return;
 	}
+
+	if ((m_snake.front().x == -1 || m_snake.front().x == SnekConfigStore::playfieldWidth)
+		|| (m_snake.front().y == -1 || m_snake.front().y == SnekConfigStore::playfieldHeight)
+		|| m_playfield[m_snake.front().x][m_snake.front().y][CellContent::snake])
+		m_dead = true;
 }
 
 void SnekGame::spawnPellet() {
 	std::random_device rd;
 	std::mt19937 mt(rd());
-	std::uniform_int_distribution<int> gen(0, m_playfield.size() - 1);
-	int x, y;
+	std::uniform_int_distribution<int> genX(0, SnekConfigStore::playfieldWidth - 1);
+	std::uniform_int_distribution<int> genY(0, SnekConfigStore::playfieldHeight - 1);
+	Pellet newPellet;
 	do {
-		x = gen(mt), y = gen(mt);
-	} while (m_playfield[x][y] != CellContent::empty);
-	m_playfield[x][y] = CellContent::pellet;
-	++m_pellets;
+		newPellet = Pellet(genX(mt), genY(mt));
+	} while (
+		m_bonus == newPellet ||
+		m_playfield[newPellet.x][newPellet.y][CellContent::pellet] ||
+		m_playfield[newPellet.x][newPellet.y][CellContent::snake]);
+	m_pellets.emplace_back(newPellet);
+	m_playfield[newPellet.x][newPellet.y][CellContent::pellet] = true;
+
+	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
+	cligCore::console::moveCursor(topLeft.x + newPellet.x * 2, topLeft.y + newPellet.y);
+	std::cout << contentColors[CellContent::pellet] << "  ";
 }
 
 void SnekGame::spawnBonus() {
 	std::random_device rd;
 	std::mt19937 mt(rd());
-	std::uniform_int_distribution<int> gen(0, m_playfield.size() - 1);
-	std::uniform_real_distribution<double> gen2(0.0, 100.0);
-	if (gen2(mt) < SnekConfigStore::bonusChance) {
-		int x, y;
+	std::uniform_int_distribution<int> genX(0, SnekConfigStore::playfieldWidth - 1);
+	std::uniform_int_distribution<int> genY(0, SnekConfigStore::playfieldHeight - 1);
+	std::uniform_real_distribution<double> genChance(0.0, 100.0);
+	Bonus newBonus;
+	if (genChance(mt) < SnekConfigStore::bonusChance) {
 		do {
-			x = gen(mt), y = gen(mt);
-		} while (m_playfield[x][y] != CellContent::empty);
-		m_playfield[x][y] = CellContent::bonus;
-		m_bonusSpawned = true;
+			newBonus = Bonus(genX(mt), genY(mt));
+		} while (
+			m_playfield[newBonus.x][newBonus.y][CellContent::pellet] ||
+			m_playfield[newBonus.x][newBonus.y][CellContent::snake]);
+		m_bonus = newBonus;
+		m_bonusTimer = SnekConfigStore::bonusDuration;
+
+		Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
+		cligCore::console::moveCursor(topLeft.x + m_bonus.x * 2, topLeft.y + m_bonus.y);
+		std::cout << contentColors[CellContent::bonus] << "  ";
 	}
 }
