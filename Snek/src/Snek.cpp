@@ -21,7 +21,6 @@ void SnekGame::play() {
 	auto handle = inputThread.native_handle();
 	inputThread.detach();
 	TerminateThread(handle, 0);
-	cligCore::console::clear();
 }
 
 void SnekGame::handleInput() {
@@ -46,6 +45,7 @@ void SnekGame::handleInput() {
 }
 
 void SnekGame::update() {
+	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 	auto oldBack = m_snake.back();
 	moveSnek();
 	checkCollision();
@@ -53,9 +53,16 @@ void SnekGame::update() {
 		spawnPellet();
 	if (m_bonus.x == -1)
 		spawnBonus();
+	else {
+		--m_bonusTimer;
+		if (m_bonusTimer < 0) {
+			cligCore::console::moveCursor(topLeft.x + m_bonus.x * 2, topLeft.y + m_bonus.y);
+			m_bonus = Bonus(-1, -1);
+			std::cout << "  ";
+		}
+	}
 
 	if (m_snake.back() != oldBack) {
-		Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 		cligCore::console::moveCursor(topLeft.x + oldBack.x * 2, topLeft.y + oldBack.y);
 		std::cout << "  ";
 		m_playfield[oldBack.x][oldBack.y][CellContent::snake] = false;
@@ -76,10 +83,12 @@ void SnekGame::printStats() {
 	cligCore::console::moveCursor(0, 0);
 	std::string score = "Score: " + std::to_string(m_currScore);
 	std::cout << score << std::endl;
-
-	std::string bonus = "Bonus: " + std::to_string(m_bonusTimer);
+	std::string bonus = "         ";;
+	if (m_bonus.x != -1)
+		bonus = "Bonus: " + std::to_string(m_bonusTimer);
 	cligCore::console::moveCursor(cligCore::console::getConsoleWidth() / 2 - bonus.length() / 2, 0);
 	std::cout << bonus << std::endl;
+
 
 	std::string length = "Length: " + std::to_string(m_snake.size());
 	cligCore::console::moveCursor(cligCore::console::getConsoleWidth() - length.length(), 0);
@@ -127,6 +136,8 @@ void SnekGame::printPellets() {
 }
 
 void SnekGame::initializePlayfield() {
+	for (int i = 0; i < SnekConfigStore::snekStartLength; ++i)
+		m_snake.emplace_back();
 }
 
 void SnekGame::moveSnek() {
