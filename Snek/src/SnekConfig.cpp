@@ -8,4 +8,4 @@ int SnekConfigStore::bonusValue = 25;
 int SnekConfigStore::bonusDuration = 50;
 double SnekConfigStore::bonusChance = 0.2;
 int SnekConfigStore::snakeUpdateDelayMs = 16;
-int SnekConfigStore::snekStartLength = 800;
+int SnekConfigStore::snekStartLength = 3;
