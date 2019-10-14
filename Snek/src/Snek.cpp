@@ -83,7 +83,7 @@ void SnekGame::printStats() {
 	cligCore::console::moveCursor(0, 0);
 	std::string score = "Score: " + std::to_string(m_currScore);
 	std::cout << score << std::endl;
-	std::string bonus = "         ";;
+	std::string bonus = "                ";
 	if (m_bonus.x != -1)
 		bonus = "Bonus: " + std::to_string(m_bonusTimer);
 	cligCore::console::moveCursor(cligCore::console::getConsoleWidth() / 2 - bonus.length() / 2, 0);
