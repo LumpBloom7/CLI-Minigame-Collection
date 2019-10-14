@@ -9,6 +9,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cligCore", "cligCore\cligCo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Snek", "Snek\Snek.vcxproj", "{DB516996-B376-4539-8120-A5A908313394}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Includes", "Common Includes", "{B752726A-7DE7-4F27-BA7D-0B8F79669862}"
+	ProjectSection(SolutionItems) = preProject
+		_include\getExePath.h = _include\getExePath.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

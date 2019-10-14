@@ -53,9 +53,6 @@ public:
 		contentColors[CellContent::snake] = rang::bg::green;
 		contentColors[CellContent::wall] = rang::bg::gray;
 		contentColors[CellContent::pellet] = rang::bg::red;
-
-		for (int i = 0; i < SnekConfigStore::snekStartLength; ++i)
-			m_snake.emplace_back();
 	}
 	void play();
 	void handleInput();
