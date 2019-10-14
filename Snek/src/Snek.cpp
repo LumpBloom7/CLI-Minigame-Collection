@@ -2,17 +2,18 @@
 
 void SnekGame::play() {
 	cligCore::console::clear();
-
+	std::atomic<Direction> nextDirection = m_currDirection.load();
 	print(true);
 	std::thread inputThread(
 		[&] {
-			while (!m_dead && !m_paused) {
-				handleInput();
+			while (!m_dead) {
+				nextDirection = handleInput();
 			}
 		}
 	);
 	while (!m_dead) {
 		if (!m_paused) {
+			m_currDirection = nextDirection.load();
 			std::this_thread::sleep_for(std::chrono::milliseconds(SnekConfigStore::snakeUpdateDelayMs));
 			update();
 			print();
@@ -23,24 +24,20 @@ void SnekGame::play() {
 	TerminateThread(handle, 0);
 }
 
-void SnekGame::handleInput() {
+Direction SnekGame::handleInput() {
 	using namespace cligCore::input;
 	switch (cligCore::input::getKeyInput()) {
 	case Keys::Left:
-		m_currDirection = (m_currDirection == Direction::right ? m_currDirection.load() : Direction::left);
-		break;
+		return (m_currDirection == Direction::right ? m_currDirection.load() : Direction::left);
 	case Keys::Right:
-		m_currDirection = (m_currDirection == Direction::left ? m_currDirection.load() : Direction::right);
-		break;
+		return  (m_currDirection == Direction::left ? m_currDirection.load() : Direction::right);
 	case Keys::Up:
-		m_currDirection = (m_currDirection == Direction::down ? m_currDirection.load() : Direction::up);
-		break;
+		return  (m_currDirection == Direction::down ? m_currDirection.load() : Direction::up);
 	case Keys::Down:
-		m_currDirection = (m_currDirection == Direction::up ? m_currDirection.load() : Direction::down);
-		break;
+		return (m_currDirection == Direction::up ? m_currDirection.load() : Direction::down);
 	case Keys::Escape:
-		m_paused = true;
-		break;
+		m_paused = !m_paused;
+		return m_currDirection;
 	}
 }
 

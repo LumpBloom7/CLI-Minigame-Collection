@@ -55,7 +55,7 @@ public:
 		contentColors[CellContent::pellet] = rang::bg::red;
 	}
 	void play();
-	void handleInput();
+	Direction handleInput();
 	void update();
 	void print(bool reprint = false);
 
