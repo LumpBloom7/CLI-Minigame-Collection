@@ -50,6 +50,9 @@ public:
 		contentColors[CellContent::snake] = rang::bg::green;
 		contentColors[CellContent::wall] = rang::bg::gray;
 		contentColors[CellContent::pellet] = rang::bg::red;
+
+		for (int i = 1; i < SnekConfigStore::snekStartLength; ++i)
+			m_snake.emplace_back();
 	}
 	void play();
 	void handleInput();
@@ -64,7 +67,7 @@ private:
 	void spawnBonus();
 
 	Playfield m_playfield = std::vector<std::vector<CellContent>>(SnekConfigStore::playfieldWidth, std::vector<CellContent>(SnekConfigStore::playfieldHeight, CellContent::empty));
-	Snake m_snake{ {{2,1}},{{1,1}} };
+	Snake m_snake{ {{1,1}} };
 	std::atomic<Direction> m_currDirection = Direction::right;
 	bool m_paused = false;
 	int m_currScore = 0;

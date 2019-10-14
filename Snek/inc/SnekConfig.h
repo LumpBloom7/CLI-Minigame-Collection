@@ -7,4 +7,5 @@ struct SnekConfigStore {
 	static int bonusValue;
 	static double bonusChance;
 	static int snakeUpdateDelayMs;
+	static int snekStartLength;
 };
