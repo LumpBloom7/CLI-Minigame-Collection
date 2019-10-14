@@ -15,7 +15,9 @@ void SnekGame::play() {
 			print();
 		}
 	}
-	inputThread.join();
+	auto handle = inputThread.native_handle();
+	inputThread.detach();
+	TerminateThread(handle, 0);
 }
 
 void SnekGame::handleInput() {
