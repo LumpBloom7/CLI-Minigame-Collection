@@ -13,10 +13,10 @@ void SnekConfigStore::serialize() {
 		<< bonusDuration << std::endl
 		<< snakeUpdateDelayMs << std::endl
 		<< snekStartLength << std::endl
-		<< contentColors[CellContent::bonus] << std::endl
-		<< contentColors[CellContent::snake] << std::endl
-		<< contentColors[CellContent::wall] << std::endl
-		<< contentColors[CellContent::pellet] << std::endl;
+		<< static_cast<int>(contentColors[CellContent::bonus]) << std::endl
+		<< static_cast<int>(contentColors[CellContent::snake]) << std::endl
+		<< static_cast<int>(contentColors[CellContent::wall]) << std::endl
+		<< static_cast<int>(contentColors[CellContent::pellet]) << std::endl;
 
 }
 void SnekConfigStore::deserialize() {
