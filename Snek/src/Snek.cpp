@@ -22,6 +22,7 @@ void SnekGame::play() {
 	auto handle = inputThread.native_handle();
 	inputThread.detach();
 	TerminateThread(handle, 0);
+	std::cout << rang::bg::reset;
 }
 
 Direction SnekGame::handleInput() {
@@ -94,14 +95,14 @@ void SnekGame::printStats() {
 }
 
 void SnekGame::printSnake() {
-	std::cout << contentColors[CellContent::snake];
+	std::cout << SnekConfigStore::contentColors[CellContent::snake];
 	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 	cligCore::console::moveCursor(topLeft.x + m_snake.front().x * 2, topLeft.y + m_snake.front().y);
 	std::cout << "  ";
 }
 
 void SnekGame::printBorder() {
-	std::cout << contentColors[CellContent::wall];
+	std::cout << SnekConfigStore::contentColors[CellContent::wall];
 	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - (SnekConfigStore::playfieldWidth + 2), 1);
 	for (int i = 0; i < SnekConfigStore::playfieldWidth * 2 + 4; ++i) {
 		cligCore::console::moveCursor(topLeft.x + i, topLeft.y);
@@ -118,7 +119,7 @@ void SnekGame::printBorder() {
 }
 
 void SnekGame::printPellets() {
-	std::cout << contentColors[CellContent::pellet];
+	std::cout << SnekConfigStore::contentColors[CellContent::pellet];
 	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 	for (auto& pellet : m_pellets) {
 		cligCore::console::moveCursor(topLeft.x + pellet.x * 2, topLeft.y + pellet.y);
@@ -126,7 +127,7 @@ void SnekGame::printPellets() {
 	}
 
 	if (m_bonus.x != -1) {
-		std::cout << contentColors[CellContent::bonus];
+		std::cout << SnekConfigStore::contentColors[CellContent::bonus];
 		cligCore::console::moveCursor(topLeft.x + m_bonus.x * 2, topLeft.y + m_bonus.y);
 		std::cout << "  ";
 	}
@@ -197,7 +198,7 @@ void SnekGame::spawnPellet() {
 
 	Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 	cligCore::console::moveCursor(topLeft.x + newPellet.x * 2, topLeft.y + newPellet.y);
-	std::cout << contentColors[CellContent::pellet] << "  " << rang::bg::reset;
+	std::cout << SnekConfigStore::contentColors[CellContent::pellet] << "  " << rang::bg::reset;
 }
 
 void SnekGame::spawnBonus() {
@@ -218,6 +219,6 @@ void SnekGame::spawnBonus() {
 
 		Coord topLeft(cligCore::console::getConsoleWidth() / 2 - SnekConfigStore::playfieldWidth, 2);
 		cligCore::console::moveCursor(topLeft.x + m_bonus.x * 2, topLeft.y + m_bonus.y);
-		std::cout << contentColors[CellContent::bonus] << "  " << rang::bg::reset;
+		std::cout << SnekConfigStore::contentColors[CellContent::bonus] << "  " << rang::bg::reset;
 	}
 }

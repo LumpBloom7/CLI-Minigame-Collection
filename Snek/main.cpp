@@ -1,9 +1,54 @@
 #include "cligCore.h"
 #include "Snek.h"
 void snekOptions();
+void colorPicker(CellContent cellContent) {
+	std::string defaultCol;
+	switch (cellContent) {
+	case CellContent::wall:
+		defaultCol = "the walls. (Default is grey)";
+		break;
+	case CellContent::bonus:
+		defaultCol = "the bonus. (Default is magenta)";
+		break;
+	case CellContent::pellet:
+		defaultCol = "the pellet. (Default is red)";
+		break;
+	case CellContent::snake:
+		defaultCol = "the snake. (Default is green)";
+		break;
+	}
+	cligCore::types::Menu colorMenu({ "Black", "Blue","Cyan","Gray","Green","Magenta","Red","Yellow", "Back" }, "Pick a color for " + defaultCol);
+	int result = 0;
+	while (result != -1) {
+		result = colorMenu.show();
+
+		switch (result) {
+		case 0:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::black; result = -1; break;
+		case 1:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::blue; result = -1; break;
+		case 2:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::cyan; result = -1; break;
+		case 3:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::gray; result = -1; break;
+		case 4:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::green; result = -1; break;
+		case 5:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::magenta; result = -1; break;
+		case 6:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::red; result = -1; break;
+		case 7:
+			SnekConfigStore::contentColors[cellContent] = rang::bg::yellow; result = -1; break;
+		case-1:case 8:
+			result = -1;
+			break;
+		}
+	}
+
+}
 void snekMain() {
 	SnekConfigStore::deserialize();
-	cligCore::types::Menu snekMenu({ "Start", "Options", "Return to main menu" }, "Snek menu");
+	cligCore::types::Menu snekMenu({ "Start", "Options", "Return to main menu"}, "Snek menu");
 
 	int result = 0;
 	while (result != -1) {
@@ -38,6 +83,10 @@ void snekOptions() {
 			"Bonus chance",
 			"Bonus duration",
 			"Game speed",
+			"Wall color",
+			"Bonus color",
+			"Pellet color",
+			"Snake color",
 			"Back"
 		}, "Snek configuration");
 
@@ -87,7 +136,7 @@ void snekOptions() {
 			std::cout << "Please enter the chances (in \%) of a bonus spawning every frame (Default is 0.02\%)" << std::endl;
 			std::cin >> tmp;
 			while (!std::cin) {
-				std::cout  << rang::fg::red << "ERROR: Invalid input" << std::endl << std::endl << rang::fg::reset;
+				std::cout << rang::fg::red << "ERROR: Invalid input" << std::endl << std::endl << rang::fg::reset;
 #undef max
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -121,8 +170,12 @@ void snekOptions() {
 			}
 			break;
 		}
+		case 9: colorPicker(CellContent::wall); break;
+		case 10: colorPicker(CellContent::bonus); break;
+		case 11: colorPicker(CellContent::pellet); break;
+		case 12: colorPicker(CellContent::snake); break;
 		case -1:
-		case 9:
+		case 13:
 			result = -1;
 		}
 

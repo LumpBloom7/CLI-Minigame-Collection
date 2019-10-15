@@ -32,5 +32,8 @@
     <ClInclude Include="inc\SnekConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,35 +7,9 @@
 #include "cligCore.h"
 #include <thread>
 #include "SnekConfig.h"
+#include "Types.h"
 
 void snekMain();
-
-struct Coord {
-	Coord(int x = 0, int y = 0) : x(x), y(y) {}
-	bool operator==(const Coord& rhs) {
-		return this->x == rhs.x && this->y == rhs.y;
-	}
-	bool operator!=(const Coord& rhs) {
-		return !operator==(rhs);
-	}
-
-	int x = 0, y = 0;
-};
-
-enum class CellContent {
-	empty,
-	wall,
-	snake,
-	pellet,
-	bonus
-};
-
-enum class Direction {
-	up,
-	down,
-	left,
-	right
-};
 
 class SnekGame {
 	using Pellet = Coord;
@@ -48,11 +22,6 @@ class SnekGame {
 public:
 	SnekGame() {
 		initializePlayfield();
-		contentColors[CellContent::bonus] = rang::bg::magenta;
-		contentColors[CellContent::empty] = rang::bg::reset;
-		contentColors[CellContent::snake] = rang::bg::green;
-		contentColors[CellContent::wall] = rang::bg::gray;
-		contentColors[CellContent::pellet] = rang::bg::red;
 	}
 	void play();
 	Direction handleInput();
@@ -80,6 +49,5 @@ private:
 	int m_bonusTimer = 50;
 	Playfield m_playfield;
 
-	std::unordered_map<CellContent, rang::bg> contentColors;
 
 };
